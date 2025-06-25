@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Who Stole The Loaf?</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      background-color: #fffbe6;
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.25em;
+    }
+    .logo {
+      height: 100px;
+      margin: 10px;
+    }
+    #buySection {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      background-color: #ffd141;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    select {
+      padding: 10px;
+      margin: 15px;
+      font-size: 1em;
+    }
+    #confirmation {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <img src="$BOWWW.PNG" alt="$BOWWW Logo" class="logo" />
+  <img src="matic.PNG" alt="MATIC Logo" class="logo" />
+
+  <h1>Who Stole The Loaf?</h1>
+  <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
+
+  <div id="buySection">
+    <select id="regionSelect">
+      <option value="North">North</option>
+      <option value="South">South</option>
+      <option value="East">East</option>
+      <option value="West">West</option>
+    </select>
+    <br />
+    <button onclick="joinGame()">Join for 3.69 MATIC</button>
+    <div id="confirmation"></div>
+  </div>
+
+  <script src="contract.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
