@@ -2,125 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Who Stole The Loaf?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <link rel="icon" href="your-logo-url.png" />
   <style>
     body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff8dc;
       margin: 0;
-      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff6d5;
       text-align: center;
     }
+    header img {
+      width: 50px;
+      margin-top: 15px;
+    }
     h1 {
-      margin-top: 10px;
-      font-size: 2.2rem;
+      margin: 0.3em 0 0;
     }
     .instructions {
-      background: #fff48f;
-      display: inline-block;
-      padding: 15px 25px;
-      margin: 20px auto;
-      text-align: left;
-      border-radius: 10px;
-      font-size: 1rem;
+      background-color: #fff072;
       max-width: 500px;
+      margin: 2em auto;
+      padding: 1em;
+      border-radius: 10px;
+      text-align: left;
     }
-    .wallet-box {
-      background-color: #fff48f;
-      padding: 20px;
-      border-radius: 12px;
-      display: inline-block;
-      margin-top: 20px;
+    .join-box {
+      background-color: #fff072;
+      max-width: 500px;
+      margin: auto;
+      padding: 1em;
+      border-radius: 10px;
     }
-    .wallet-row {
+    .button-group {
       display: flex;
       justify-content: center;
       gap: 10px;
+      margin-bottom: 1em;
       flex-wrap: wrap;
     }
-    button {
-      font-family: 'Montserrat', sans-serif;
-      padding: 10px 20px;
-      font-size: 1rem;
+    .button {
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
       border: none;
-      border-radius: 10px;
       cursor: pointer;
     }
-    #connectButton {
-      background-color: purple;
-      color: white;
+    .connect { background-color: #8000c9; color: white; }
+    .metamask { background-color: #ffd141; }
+    .join { background-color: #eee; }
+    .status {
+      margin-bottom: 1em;
+      font-weight: bold;
     }
-    #joinButton {
-      background-color: #eee;
-      color: black;
-      margin-left: 10px;
-    }
-    .dropdown-join {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
-      gap: 10px;
+    .connected-address {
+      color: green;
     }
     select {
-      font-size: 1rem;
-      padding: 5px;
+      padding: 8px;
+      border-radius: 6px;
+      margin-right: 10px;
     }
-    #walletStatus {
-      font-weight: bold;
-    }
-    #walletAddress {
-      font-weight: bold;
-      color: red;
+    #joinBtn:disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <img src="your-logo-url.png" alt="Logo" width="60" style="margin-top: 20px;" />
-  <h1>Who Stole The Loaf?</h1>
-  <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
+  <header>
+    <img src="logo.png" alt="Logo">
+  </header>
+  <main>
+    <h1>Who Stole The Loaf?</h1>
+    <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
 
-  <div class="instructions">
-    <strong>How to Join:</strong>
-    <ul>
-      <li>Click <strong>“Connect Wallet”</strong> to link your MetaMask wallet.</li>
-      <li>Mobile users: click <strong>“Open in MetaMask”</strong> to launch inside MetaMask browser.</li>
-      <li>Select your region — this cannot be changed after you join.</li>
-      <li>Click <strong>“Join for 3.69 MATIC”</strong> and confirm the transaction in MetaMask.</li>
-      <li>You’ll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
-      <li>Make sure your wallet is on the <strong>Polygon Network (Chain ID: 137)</strong>.</li>
-    </ul>
-  </div>
-
-  <div class="wallet-box">
-    <div class="wallet-row">
-      <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
-      <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank">
-        <button style="background-color: #ffd141;">Open in MetaMask</button>
-      </a>
+    <div class="instructions">
+      <b>How to Join:</b>
+      <ul>
+        <li>Click <b>"Connect Wallet"</b> to link your MetaMask wallet.</li>
+        <li>Mobile users: click <b>"Open in MetaMask"</b> to launch inside MetaMask browser.</li>
+        <li>Select your region — this cannot be changed after you join.</li>
+        <li>Click <b>"Join for 3.69 MATIC"</b> and confirm the transaction in MetaMask.</li>
+        <li>You’ll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
+        <li><b>Make sure your wallet is on the <u>Polygon Network (Chain ID: 137)</u>.</b></li>
+      </ul>
     </div>
 
-    <p><span id="walletStatus">Connected:</span> <span id="walletAddress">Not connected</span></p>
+    <div class="join-box">
+      <div class="button-group">
+        <button class="button connect" id="connectWallet">Connect Wallet</button>
+        <button class="button metamask" id="openMetaMask">Open in MetaMask</button>
+      </div>
 
-    <div class="dropdown-join">
-      <select id="regionSelect">
-        <option value="North">North</option>
-        <option value="South">South</option>
-        <option value="East">East</option>
-        <option value="West">West</option>
-        <option value="Central">Central</option>
-        <option value="Pacific">Pacific</option>
-        <option value="Atlantic">Atlantic</option>
-      </select>
-      <button id="joinButton" onclick="joinGame()" disabled>Join for 3.69 MATIC</button>
+      <div class="status">
+        Connected: <span id="walletStatus" class="connected-address">Not connected</span>
+      </div>
+
+      <div class="button-group">
+        <select id="regionSelect">
+          <option value="North">North</option>
+          <option value="South">South</option>
+          <option value="East">East</option>
+          <option value="West">West</option>
+        </select>
+        <button class="button join" id="joinBtn" disabled>Join for 3.69 MATIC</button>
+      </div>
     </div>
-  </div>
+  </main>
 
-  <script src="contract.js"></script>
-  <script src="app.js"></script>
+  <script>
+    const connectWalletBtn = document.getElementById('connectWallet');
+    const openMetaMaskBtn = document.getElementById('openMetaMask');
+    const joinBtn = document.getElementById('joinBtn');
+    const walletStatus = document.getElementById('walletStatus');
+    const regionSelect = document.getElementById('regionSelect');
+
+    const CONTRACT_ADDRESS = "0x62B5433913dC1C2E9C18967b97abd003F40AbF74";
+    const TOKEN_ADDRESS = "0x284414b6777872E6DD8982394Fed1779dc87a3Cf";
+
+    let provider;
+    let signer;
+    let userAddress;
+
+    connectWalletBtn.addEventListener('click', async () => {
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+        walletStatus.textContent = userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+        walletStatus.style.color = 'green';
+        joinBtn.disabled = false;
+      }
+    });
+
+    openMetaMaskBtn.addEventListener('click', () => {
+      window.location.href = "https://metamask.app.link/dapp/breadoftheinternet.github.io/whostoletheloaf/";
+    });
+
+    joinBtn.addEventListener('click', async () => {
+      if (!signer) return alert("Connect wallet first");
+      const contractABI = [
+        "function joinRegion(string memory region) public payable"
+      ];
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
+
+      try {
+        const tx = await contract.joinRegion(regionSelect.value, {
+          value: ethers.utils.parseEther("3.69")
+        });
+        await tx.wait();
+        alert("Successfully joined the region!");
+      } catch (err) {
+        console.error(err);
+        alert("Transaction failed");
+      }
+    });
+  </script>
 </body>
 </html>
+
