@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Who Stole The Loaf?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     body {
@@ -25,31 +25,43 @@
       padding: 10px 20px;
       font-size: 1.2em;
       border: none;
-      cursor: pointer;
       border-radius: 10px;
-      margin: 5px;
+      cursor: pointer;
     }
-    #connectButton.connected {
-      background-color: #ccc;
+    #connectButton {
+      background-color: #6a0dad;
       color: white;
-      pointer-events: none;
-      cursor: default;
     }
-    a button {
-      background-color: #ffd141;
-      color: black;
+    .wallet-box, .interaction-box {
+      margin-top: 30px;
+      background: #fff4b0;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      text-align: center;
     }
-    select {
-      padding: 10px;
-      margin: 10px;
-      font-size: 1em;
+    .button-row, .region-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     #confirmation {
-      margin-top: 20px;
+      margin-top: 10px;
       color: green;
       font-weight: bold;
     }
-    .box {
+    #walletAddressDisplay {
+      color: green;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    select {
+      padding: 10px;
+      font-size: 1em;
+    }
+    #instructions {
       margin-top: 40px;
       font-size: 0.95em;
       color: #333;
@@ -60,20 +72,6 @@
       padding: 15px;
       border-radius: 10px;
     }
-    #walletAddress {
-      font-weight: bold;
-      color: green;
-      font-size: 0.95em;
-      margin-top: 5px;
-    }
-    .row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
   </style>
 </head>
 <body>
@@ -83,8 +81,7 @@
   <h1>Who Stole The Loaf?</h1>
   <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
 
-  <!-- Instructions Box -->
-  <div class="box">
+  <div id="instructions">
     <strong>How to Join:</strong>
     <ul style="text-align: left;">
       <li>Click <b>“Connect Wallet”</b> to link your MetaMask wallet.</li>
@@ -96,16 +93,19 @@
     </ul>
   </div>
 
-  <!-- Wallet Action Box -->
-  <div class="box">
-    <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
-    <div id="walletAddress"></div>
+  <div class="interaction-box">
+    <div class="button-row">
+      <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
+      <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank">
+        <button>Open in MetaMask</button>
+      </a>
+    </div>
 
-    <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank">
-      <button>Open in MetaMask</button>
-    </a>
+    <div id="walletStatus">
+      <p><strong>Connected:</strong> <span id="walletAddressDisplay">Not connected</span></p>
+    </div>
 
-    <div class="row">
+    <div class="region-row">
       <select id="regionSelect">
         <option value="North">North</option>
         <option value="South">South</option>
@@ -121,33 +121,7 @@
     <div id="confirmation"></div>
   </div>
 
-  <script>
-    async function connectWallet() {
-      if (typeof window.ethereum !== "undefined") {
-        try {
-          const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-          const wallet = accounts[0];
-          const shortWallet = wallet.slice(0, 6) + "..." + wallet.slice(-4);
-
-          const button = document.getElementById("connectButton");
-          button.innerText = "Connected";
-          button.classList.add("connected");
-
-          document.getElementById("walletAddress").innerText = "Connected: " + shortWallet;
-
-          // Enable the join button
-          document.getElementById("joinButton").disabled = false;
-        } catch (err) {
-          console.error("Connection rejected:", err);
-        }
-      } else {
-        alert("MetaMask not detected. Please install MetaMask or use MetaMask browser.");
-      }
-    }
-  </script>
-
   <script src="contract.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
-
