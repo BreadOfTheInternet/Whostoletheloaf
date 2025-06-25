@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     body {
@@ -15,40 +15,50 @@
       color: white;
     }
 
-    header img {
-      width: 120px;
+    header {
       margin-top: 20px;
     }
 
+    header img {
+      width: 120px;
+      margin: 0 12px;
+      vertical-align: middle;
+    }
+
     h1 {
-      margin: 0.4em 0 0;
-      font-size: 2em;
+      margin: 0.6em 0 0.3em;
+      font-size: 1.8em;
+      padding: 0 12px;
+    }
+
+    p {
+      font-size: 1em;
+      margin-top: 0;
     }
 
     .instructions,
-    .join-box,
-    .admin-box {
+    .join-box {
       background-color: #ffd141;
       color: black;
       max-width: 700px;
       width: 90%;
-      margin: 2em auto;
+      margin: 1.5em auto;
       padding: 1.5em;
-      border-radius: 12px;
+      border-radius: 14px;
       text-align: left;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
 
     .instructions ul {
-      padding-left: 1.2em;
+      padding-left: 1.5em;
     }
 
     .button-group {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 1.2em;
-      flex-wrap: wrap;
     }
 
     .button {
@@ -103,18 +113,36 @@
     footer a {
       color: #fff;
       text-decoration: none;
-      margin: 0 8px;
+      margin: 0 10px;
       font-size: 0.9em;
     }
 
-    @media (max-width: 600px) {
-      .instructions, .join-box, .admin-box {
-        width: 95%;
+    @media (max-width: 480px) {
+      .button-group {
+        flex-direction: column;
+      }
+
+      select {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      header img {
+        width: 90px;
+      }
+
+      h1 {
+        font-size: 1.4em;
       }
     }
   </style>
 </head>
 <body>
+  <header>
+    <img src="logo1.png" alt="Logo 1" />
+    <img src="logo2.png" alt="Logo 2" />
+  </header>
+
   <main>
     <h1>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</h1>
     <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
@@ -150,12 +178,6 @@
       <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
     </div>
 
-    <div class="admin-box">
-      <strong>Admin Reward Distribution:</strong>
-      <p>Enter wallet addresses per region and distribute 10,000,000 $BOWWW only if the region has ≥ 50 wallets.</p>
-      <button class="button" onclick="alert('This panel is for future admin functions including reward distribution.')">[Coming Soon]</button>
-    </div>
-
     <footer>
       <a href="https://polygonscan.com/address/0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006" target="_blank">Contract on Polygonscan</a> |
       <a href="https://breadoftheinternet.github.io/bowww-dapp/">Buy $BOWWW</a> |
@@ -165,14 +187,11 @@
 
   <script>
     const CONTRACT_ADDRESS = "0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006";
-    const BOWWW_TOKEN_ADDRESS = "0x284414b6777872E6DD8982394Fed1779dc87a3Cf";
+    const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
     const joinPrice = "3.69";
     const rewardAmount = "1361.6";
-    const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
 
-    let provider;
-    let signer;
-    let userAddress = "";
+    let provider, signer, userAddress = "";
 
     const connectWalletBtn = document.getElementById("connectWalletBtn");
     const joinBtn = document.getElementById("joinBtn");
@@ -214,6 +233,7 @@
         });
 
         await tx.wait();
+
         const txHash = tx.hash;
         alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region} region!\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
       } catch (err) {
@@ -224,6 +244,7 @@
   </script>
 </body>
 </html>
+
 
 
 
