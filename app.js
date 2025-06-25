@@ -10,6 +10,7 @@ let userAddress = "";
 const connectWalletBtn = document.getElementById("connectWalletBtn");
 const joinBtn = document.getElementById("joinBtn");
 const walletStatus = document.getElementById("walletStatus");
+const regionSelect = document.getElementById("regionSelect"); // ✅ This was missing
 
 connectWalletBtn.addEventListener("click", async () => {
   if (window.ethereum) {
@@ -32,25 +33,32 @@ connectWalletBtn.addEventListener("click", async () => {
 });
 
 joinBtn.addEventListener("click", async () => {
-  if (!signer) return alert("Please connect your wallet first.");
+  if (!signer) {
+    alert("Please connect your wallet first.");
+    return;
+  }
 
-  const region = document.getElementById("regionSelect").value;
+  const region = regionSelect.value;
 
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, [
-    "function join(string memory _region) public payable"
-  ], signer);
+  const contractABI = [
+    "function joinGame(string memory region) public payable"
+  ];
+
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
 
   try {
-    const tx = await contract.join(region, {
+    const tx = await contract.joinGame(region, {
       value: ethers.utils.parseEther(joinPrice)
     });
     await tx.wait();
     alert(`Success! You joined ${region} and received ${rewardAmount} $BOWWW.`);
   } catch (err) {
     console.error(err);
-    alert("Transaction failed. Check your network and balance.");
+    alert("Transaction failed. Please check your wallet, network, or contract logic.");
   }
 });
+
+
 
 
 
