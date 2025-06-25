@@ -26,10 +26,12 @@
     }
 
     .instructions,
-    .join-box {
+    .join-box,
+    .admin-box {
       background-color: #ffd141;
       color: black;
       max-width: 700px;
+      width: 90%;
       margin: 2em auto;
       padding: 1.5em;
       border-radius: 12px;
@@ -105,14 +107,9 @@
       font-size: 0.9em;
     }
 
-    @media (max-width: 480px) {
-      .button-group {
-        flex-direction: column;
-      }
-
-      select {
-        margin-right: 0;
-        margin-bottom: 10px;
+    @media (max-width: 600px) {
+      .instructions, .join-box, .admin-box {
+        width: 95%;
       }
     }
   </style>
@@ -151,6 +148,12 @@
         <option value="Oceania">Oceania</option>
       </select>
       <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
+    </div>
+
+    <div class="admin-box">
+      <strong>Admin Reward Distribution:</strong>
+      <p>Enter wallet addresses per region and distribute 10,000,000 $BOWWW only if the region has ≥ 50 wallets.</p>
+      <button class="button" onclick="alert('This panel is for future admin functions including reward distribution.')">[Coming Soon]</button>
     </div>
 
     <footer>
@@ -211,7 +214,6 @@
         });
 
         await tx.wait();
-
         const txHash = tx.hash;
         alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region} region!\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
       } catch (err) {
