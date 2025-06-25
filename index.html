@@ -41,7 +41,7 @@
     }
     select {
       padding: 10px;
-      margin: 15px;
+      margin: 10px;
       font-size: 1em;
     }
     #confirmation {
@@ -65,6 +65,14 @@
       color: green;
       font-size: 0.95em;
       margin-top: 5px;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
     }
   </style>
 </head>
@@ -97,17 +105,19 @@
       <button>Open in MetaMask</button>
     </a>
 
-    <select id="regionSelect">
-      <option value="North">North</option>
-      <option value="South">South</option>
-      <option value="East">East</option>
-      <option value="West">West</option>
-      <option value="Central">Central</option>
-      <option value="Pacific">Pacific</option>
-      <option value="Atlantic">Atlantic</option>
-    </select>
-    <br/>
-    <button onclick="joinGame()">Join for 3.69 MATIC</button>
+    <div class="row">
+      <select id="regionSelect">
+        <option value="North">North</option>
+        <option value="South">South</option>
+        <option value="East">East</option>
+        <option value="West">West</option>
+        <option value="Central">Central</option>
+        <option value="Pacific">Pacific</option>
+        <option value="Atlantic">Atlantic</option>
+      </select>
+      <button id="joinButton" onclick="joinGame()" disabled>Join for 3.69 MATIC</button>
+    </div>
+
     <div id="confirmation"></div>
   </div>
 
@@ -124,6 +134,9 @@
           button.classList.add("connected");
 
           document.getElementById("walletAddress").innerText = "Connected: " + shortWallet;
+
+          // Enable the join button
+          document.getElementById("joinButton").disabled = false;
         } catch (err) {
           console.error("Connection rejected:", err);
         }
