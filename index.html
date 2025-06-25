@@ -3,137 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web  </title>
+  <title>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
- <style>
-  body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #6a0dad; /* Purple background */
-    text-align: center;
-    color: white;
-  }
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #6a0dad;
+      text-align: center;
+      color: white;
+    }
 
-  header img {
-    width: 120px; /* Enlarged logo */
-    margin-top: 20px;
-  }
+    header img {
+      width: 120px;
+      margin-top: 20px;
+    }
 
-  h1 {
-    margin: 0.4em 0 0;
-    font-size: 2em;
-  }
+    h1 {
+      margin: 0.4em 0 0;
+      font-size: 2em;
+    }
 
-  .instructions,
-  .join-box {
-    background-color: #ffd141; /* Yellow box */
-    color: black;              /* Black text inside */
-    max-width: 500px;
-    margin: 2em auto;
-    padding: 1.5em;
-    border-radius: 12px;
-    text-align: left;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  }
+    .instructions,
+    .join-box {
+      background-color: #ffd141;
+      color: black;
+      max-width: 500px;
+      margin: 2em auto;
+      padding: 1.5em;
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
-  .instructions ul {
-    padding-left: 1.2em;
-  }
+    .instructions ul {
+      padding-left: 1.2em;
+    }
 
-  .button-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 1.2em;
-    flex-wrap: wrap;
-  }
-
-  .button {
-    padding: 10px 18px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-  }
-
-  .connect {
-    background-color: #8000c9;
-    color: white;
-  }
-
-  .metamask {
-    background-color: #ffffff;
-    color: black;
-  }
-
-  .join {
-    background-color: #eeeeee;
-    color: black;
-  }
-
-  .status {
-    margin-bottom: 1em;
-    font-weight: bold;
-  }
-
-  .connected-address {
-    color: green;
-  }
-
-  select {
-    padding: 8px;
-    border-radius: 6px;
-    margin-right: 10px;
-  }
-
-  #joinBtn:disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 480px) {
     .button-group {
-      flex-direction: column;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.2em;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .connect {
+      background-color: #8000c9;
+      color: white;
+    }
+
+    .metamask {
+      background-color: #ffffff;
+      color: black;
+    }
+
+    .join {
+      background-color: #eeeeee;
+      color: black;
+    }
+
+    .status {
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+
+    .connected-address {
+      color: green;
     }
 
     select {
-      margin-right: 0;
-      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      margin-right: 10px;
     }
-  }
 
-   @media (max-width: 600px) {
-  header img {
-    height: 120px !important;
-    max-width: 80vw;
-  }
+    #joinBtn:disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
 
-  header {
-    gap: 16px !important;
-  }
-}
+    @media (max-width: 480px) {
+      .button-group {
+        flex-direction: column;
+      }
 
-</style>
+      select {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+    }
 
+    @media (max-width: 600px) {
+      header img {
+        height: 120px !important;
+        max-width: 80vw;
+      }
+
+      header {
+        gap: 16px !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<header style="
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-">
-  <img src="$BOWWW.PNG" alt="$BOWWW Logo" style="height: 150px; max-width: 45vw;">
-  <img src="matic.PNG" alt="MATIC Logo" style="height: 150px; max-width: 45vw;">
-</header>
+  <header style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  ">
+    <img src="$BOWWW.PNG" alt="$BOWWW Logo" style="height: 150px; max-width: 45vw;">
+    <img src="matic.PNG" alt="MATIC Logo" style="height: 150px; max-width: 45vw;">
+  </header>
 
   <main>
     <h1>Who Stole The Loaf?</h1>
@@ -161,19 +159,18 @@
         Connected: <span id="walletStatus" class="connected-address">Not connected</span>
       </div>
 
-<div class="button-group">
-  <select id="regionSelect">
-    <option value="North America">North America</option>
-    <option value="South America">South America</option>
-    <option value="Europe">Europe</option>
-    <option value="Asia">Asia</option>
-    <option value="Africa">Africa</option>
-    <option value="Australia">Australia</option>
-    <option value="Antarctica">Antarctica</option>
-  </select>
-  <button class="button join" id="joinBtn" disabled>Join for 3.69 MATIC</button>
-</div>
-
+      <div class="button-group">
+        <select id="regionSelect">
+          <option value="North America">North America</option>
+          <option value="South America">South America</option>
+          <option value="Europe">Europe</option>
+          <option value="Asia">Asia</option>
+          <option value="Africa">Africa</option>
+          <option value="Australia">Australia</option>
+          <option value="Antarctica">Antarctica</option>
+        </select>
+        <button class="button join" id="joinBtn" disabled>Join for 3.69 MATIC</button>
+      </div>
     </div>
   </main>
 
@@ -186,6 +183,8 @@
 
     const CONTRACT_ADDRESS = "0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006";
     const TOKEN_ADDRESS = "0x284414b6777872E6DD8982394Fed1779dc87a3Cf";
+    const joinPrice = "3.69";
+    const rewardAmount = "1361.6";
 
     let provider;
     let signer;
@@ -209,23 +208,27 @@
 
     joinBtn.addEventListener('click', async () => {
       if (!signer) return alert("Connect wallet first");
+
       const contractABI = [
-        "function joinRegion(string memory region) public payable"
+        "function joinGame(string memory region) public payable"
       ];
+
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
+      const region = regionSelect.value;
 
       try {
-        const tx = await contract.joinRegion(regionSelect.value, {
-          value: ethers.utils.parseEther("3.69")
+        const tx = await contract.joinGame(region, {
+          value: ethers.utils.parseEther(joinPrice)
         });
         await tx.wait();
-        alert("Successfully joined the region!");
+        alert(`Success! You joined ${region} and received ${rewardAmount} $BOWWW.`);
       } catch (err) {
         console.error(err);
-        alert("Transaction failed");
+        alert("Transaction failed. Please check your wallet, network, or contract logic.");
       }
     });
   </script>
 </body>
 </html>
+
 
