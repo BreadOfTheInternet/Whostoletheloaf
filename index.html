@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
     body {
@@ -29,13 +29,12 @@
     .join-box {
       background-color: #ffd141;
       color: black;
-      max-width: 680px;
-      width: 90%;
+      max-width: 620px;
       margin: 2em auto;
       padding: 1.5em;
       border-radius: 12px;
       text-align: left;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     .instructions ul {
@@ -96,21 +95,19 @@
     }
 
     footer {
-      margin-top: 60px;
-      font-size: 14px;
-      color: white;
-      opacity: 0.9;
+      margin-top: 2em;
     }
 
-    @media (max-width: 600px) {
+    footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 8px;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 480px) {
       .button-group {
         flex-direction: column;
-      }
-
-      .instructions,
-      .join-box {
-        width: 95%;
-        padding: 1em;
       }
 
       select {
@@ -121,56 +118,58 @@
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo" />
-  </header>
-
   <main>
     <h1>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</h1>
     <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
 
     <div class="instructions">
-      <h3>How to Join:</h3>
+      <strong>How to Join:</strong>
       <ul>
-        <li>Click <strong>"Connect Wallet"</strong> to link your MetaMask wallet.</li>
-        <li>Mobile users: click <strong>"Open in MetaMask"</strong> to launch inside MetaMask browser.</li>
+        <li>Click <b>"Connect Wallet"</b> to link your MetaMask wallet.</li>
+        <li>Mobile users: click <b>"Open in MetaMask"</b> to launch inside MetaMask browser.</li>
         <li>Select your region — this cannot be changed after you join.</li>
-        <li>Click <strong>"Join for 3.69 MATIC"</strong> and confirm the transaction in MetaMask.</li>
+        <li>Click <b>"Join for 3.69 MATIC"</b> and confirm the transaction in MetaMask.</li>
         <li>You'll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
-        <li><strong>Make sure your wallet is on the Polygon Network (Chain ID: 137).</strong></li>
+        <li><b>Make sure your wallet is on the Polygon Network (Chain ID: 137).</b></li>
       </ul>
     </div>
 
     <div class="join-box">
       <div class="button-group">
         <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
-        <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank" class="button metamask">Open in MetaMask</a>
+        <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" class="button metamask">Open in MetaMask</a>
       </div>
-      <div class="status">Connected: <span id="walletStatus">Not connected</span></div>
+      <div class="status">
+        Connected: <span id="walletStatus" class="connected-address">Not connected</span>
+      </div>
       <select id="regionSelect">
         <option value="North America">North America</option>
         <option value="South America">South America</option>
         <option value="Europe">Europe</option>
         <option value="Asia">Asia</option>
+        <option value="Africa">Africa</option>
+        <option value="Oceania">Oceania</option>
       </select>
       <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
     </div>
-  </main>
 
-  <footer>
-    <div>
-      <a href="https://polygonscan.com/address/0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006" target="_blank" style="color: white; margin: 0 10px;">Contract on Polygonscan</a> |
-      <a href="https://breadoftheinternet.github.io/bowww-dapp/" target="_blank" style="color: white; margin: 0 10px;">Buy $BOWWW</a> |
-      <a href="#" style="color: white; margin: 0 10px;">More Info</a>
-    </div>
-  </footer>
+    <footer>
+      <a href="https://polygonscan.com/address/0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006" target="_blank">Contract on Polygonscan</a> |
+      <a href="https://breadoftheinternet.github.io/bowww-dapp/">Buy $BOWWW</a> |
+      <a href="#">More Info</a>
+    </footer>
+  </main>
 
   <script>
     const CONTRACT_ADDRESS = "0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006";
+    const BOWWW_TOKEN_ADDRESS = "0x284414b6777872E6DD8982394Fed1779dc87a3Cf";
     const joinPrice = "3.69";
     const rewardAmount = "1361.6";
+    const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
 
-    let provider, signer, userAddress = "";
+    let provider;
+    let signer;
+    let userAddress = "";
 
     const connectWalletBtn = document.getElementById("connectWalletBtn");
     const joinBtn = document.getElementById("joinBtn");
@@ -185,7 +184,7 @@
           signer = provider.getSigner();
           userAddress = await signer.getAddress();
           walletStatus.textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-          walletStatus.classList.add("connected-address");
+          walletStatus.style.color = "green";
           joinBtn.disabled = false;
         } catch (err) {
           console.error(err);
@@ -205,16 +204,16 @@
 
       const region = regionSelect.value;
 
-      const contractABI = ["function joinGame(string memory region) public payable"];
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
-
       try {
-        const tx = await contract.joinGame(region, {
+        const tx = await signer.sendTransaction({
+          to: adminWallet,
           value: ethers.utils.parseEther(joinPrice)
         });
-        const receipt = await tx.wait();
-        const hash = receipt.transactionHash;
-        alert(`✅ Success!\nWallet ${userAddress} has joined Who Stole The Loaf representing ${region}.\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${hash}`);
+
+        await tx.wait();
+
+        const txHash = tx.hash;
+        alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region} region!\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
       } catch (err) {
         console.error(err);
         alert("Transaction failed. Please check your wallet, network, or contract logic.");
