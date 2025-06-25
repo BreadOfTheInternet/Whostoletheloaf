@@ -104,14 +104,37 @@
       margin-bottom: 10px;
     }
   }
+
+   @media (max-width: 600px) {
+  header img {
+    height: 120px !important;
+    max-width: 80vw;
+  }
+
+  header {
+    gap: 16px !important;
+  }
+}
+
 </style>
 
 </head>
 <body>
- <header style="display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 15px;">
-  <img src="$BOWWW.PNG" alt="$BOWWW Logo" style="height: 180px;">
-  <img src="matic.PNG" alt="MATIC Logo" style="height: 180px;">
+<header style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+">
+  <img src="$BOWWW.PNG" alt="$BOWWW Logo" style="height: 150px; max-width: 45vw;">
+  <img src="matic.PNG" alt="MATIC Logo" style="height: 150px; max-width: 45vw;">
 </header>
+
   <main>
     <h1>Who Stole The Loaf?</h1>
     <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
