@@ -2,110 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Who Stole The Loaf?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <link rel="icon" href="your-logo-url.png" />
   <style>
     body {
-      background-color: #fffbe6;
       font-family: 'Montserrat', sans-serif;
+      background-color: #fff8dc;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      padding: 20px;
     }
     h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.25em;
+      margin-top: 10px;
+      font-size: 2.2rem;
     }
-    .logo {
-      height: 100px;
-      margin: 10px;
+    .instructions {
+      background: #fff48f;
+      display: inline-block;
+      padding: 15px 25px;
+      margin: 20px auto;
+      text-align: left;
+      border-radius: 10px;
+      font-size: 1rem;
+      max-width: 500px;
+    }
+    .wallet-box {
+      background-color: #fff48f;
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .wallet-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     button {
+      font-family: 'Montserrat', sans-serif;
       padding: 10px 20px;
-      font-size: 1.2em;
+      font-size: 1rem;
       border: none;
       border-radius: 10px;
       cursor: pointer;
     }
     #connectButton {
-      background-color: #6a0dad;
+      background-color: purple;
       color: white;
     }
-    .wallet-box, .interaction-box {
-      margin-top: 30px;
-      background: #fff4b0;
-      padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      text-align: center;
+    #joinButton {
+      background-color: #eee;
+      color: black;
+      margin-left: 10px;
     }
-    .button-row, .region-row {
+    .dropdown-join {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-top: 10px;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-    #confirmation {
-      margin-top: 10px;
-      color: green;
-      font-weight: bold;
-    }
-    #walletAddressDisplay {
-      color: green;
-      font-weight: bold;
-      margin-top: 10px;
     }
     select {
-      padding: 10px;
-      font-size: 1em;
+      font-size: 1rem;
+      padding: 5px;
     }
-    #instructions {
-      margin-top: 40px;
-      font-size: 0.95em;
-      color: #333;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      background: #fff4b0;
-      padding: 15px;
-      border-radius: 10px;
+    #walletStatus {
+      font-weight: bold;
+    }
+    #walletAddress {
+      font-weight: bold;
+      color: red;
     }
   </style>
 </head>
 <body>
-  <img src="$BOWWW.PNG" alt="$BOWWW Logo" class="logo" />
-  <img src="matic.PNG" alt="MATIC Logo" class="logo" />
-
+  <img src="your-logo-url.png" alt="Logo" width="60" style="margin-top: 20px;" />
   <h1>Who Stole The Loaf?</h1>
   <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
 
-  <div id="instructions">
+  <div class="instructions">
     <strong>How to Join:</strong>
-    <ul style="text-align: left;">
-      <li>Click <b>“Connect Wallet”</b> to link your MetaMask wallet.</li>
-      <li>Mobile users: click <b>“Open in MetaMask”</b> to launch inside MetaMask browser.</li>
+    <ul>
+      <li>Click <strong>“Connect Wallet”</strong> to link your MetaMask wallet.</li>
+      <li>Mobile users: click <strong>“Open in MetaMask”</strong> to launch inside MetaMask browser.</li>
       <li>Select your region — this cannot be changed after you join.</li>
-      <li>Click <b>“Join for 3.69 MATIC”</b> and confirm the transaction in MetaMask.</li>
-      <li>You’ll get 1361.61 $BOWWW and your wallet will be eligible for regional rewards.</li>
-      <li>Make sure your wallet is on the <b>Polygon Network (Chain ID: 137)</b>.</li>
+      <li>Click <strong>“Join for 3.69 MATIC”</strong> and confirm the transaction in MetaMask.</li>
+      <li>You’ll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
+      <li>Make sure your wallet is on the <strong>Polygon Network (Chain ID: 137)</strong>.</li>
     </ul>
   </div>
 
-  <div class="interaction-box">
-    <div class="button-row">
+  <div class="wallet-box">
+    <div class="wallet-row">
       <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
       <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank">
-        <button>Open in MetaMask</button>
+        <button style="background-color: #ffd141;">Open in MetaMask</button>
       </a>
     </div>
 
-    <div id="walletStatus">
-      <p><strong>Connected:</strong> <span id="walletAddressDisplay">Not connected</span></p>
-    </div>
+    <p><span id="walletStatus">Connected:</span> <span id="walletAddress">Not connected</span></p>
 
-    <div class="region-row">
+    <div class="dropdown-join">
       <select id="regionSelect">
         <option value="North">North</option>
         <option value="South">South</option>
@@ -117,8 +118,6 @@
       </select>
       <button id="joinButton" onclick="joinGame()" disabled>Join for 3.69 MATIC</button>
     </div>
-
-    <div id="confirmation"></div>
   </div>
 
   <script src="contract.js"></script>
