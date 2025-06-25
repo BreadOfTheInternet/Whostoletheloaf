@@ -29,9 +29,11 @@
       border-radius: 10px;
       margin: 5px;
     }
-    #connectButton {
-      background-color: #6a0dad;
+    #connectButton.connected {
+      background-color: #ccc;
       color: white;
+      pointer-events: none;
+      cursor: default;
     }
     a button {
       background-color: #ffd141;
@@ -60,10 +62,9 @@
     }
     #walletAddress {
       font-weight: bold;
-      color: #4a148c;
-      font-size: 0.9em;
-      margin-top: 10px;
-      word-break: break-all;
+      color: green;
+      font-size: 0.95em;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -90,10 +91,11 @@
   <!-- Wallet Action Box -->
   <div class="box">
     <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
+    <div id="walletAddress"></div>
+
     <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" target="_blank">
       <button>Open in MetaMask</button>
     </a>
-    <div id="walletAddress"></div>
 
     <select id="regionSelect">
       <option value="North">North</option>
@@ -115,8 +117,13 @@
         try {
           const accounts = await ethereum.request({ method: "eth_requestAccounts" });
           const wallet = accounts[0];
-          document.getElementById("connectButton").innerText = "Wallet Connected ✅";
-          document.getElementById("walletAddress").innerText = "Connected: " + wallet;
+          const shortWallet = wallet.slice(0, 6) + "..." + wallet.slice(-4);
+
+          const button = document.getElementById("connectButton");
+          button.innerText = "Connected";
+          button.classList.add("connected");
+
+          document.getElementById("walletAddress").innerText = "Connected: " + shortWallet;
         } catch (err) {
           console.error("Connection rejected:", err);
         }
@@ -130,3 +137,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+
