@@ -1,5 +1,5 @@
 // contract.js
-const CONTRACT_ADDRESS = "0xYourContractAddressHere"; // <-- Replace with actual address
+const CONTRACT_ADDRESS = "0xYourContractAddressHere"; // <-- Replace with your actual address
 const CONTRACT_ABI = [
   {
     "inputs": [
@@ -11,3 +11,4 @@ const CONTRACT_ABI = [
     "type": "function"
   }
 ];
+
