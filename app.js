@@ -1,31 +1,41 @@
-// ==== UI Elements ====
-const joinBtn = document.getElementById("joinBtn");
-const regionSelect = document.getElementById("regionSelect");
-const statusText = document.getElementById("status");
+// app.js
+async function joinGame() {
+  const region = document.getElementById("regionSelect").value;
 
-// ==== Event Listener ====
-joinBtn.addEventListener("click", async () => {
-  if (!contract || !signer) {
-    statusText.textContent = "MetaMask not connected.";
-    return;
-  }
-
-  const region = regionSelect.value;
-  if (!region) {
-    statusText.textContent = "Please select a region.";
+  if (!window.ethereum) {
+    alert("MetaMask is not detected. Please install MetaMask.");
     return;
   }
 
   try {
+    await ethereum.request({ method: "eth_requestAccounts" });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
     const tx = await contract.joinGame(region, {
-      value: ethers.utils.parseEther("3.69")
+      value: ethers.utils.parseEther("3.69"),
     });
 
-    statusText.textContent = "Transaction sent. Waiting for confirmation...";
     await tx.wait();
-    statusText.textContent = `Joined successfully in ${region} region! 🎉`;
-  } catch (error) {
-    console.error(error);
-    statusText.textContent = "Transaction failed. Make sure you have enough MATIC.";
+    document.getElementById("confirmation").innerText = `Joined ${region} successfully!`;
+  } catch (err) {
+    console.error(err);
+    alert("Transaction failed. Check console for details.");
   }
-});
+}
+
+// Optional: Connect wallet button
+async function connectWallet() {
+  if (typeof window.ethereum !== "undefined") {
+    try {
+      await ethereum.request({ method: "eth_requestAccounts" });
+      alert("Wallet connected successfully.");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to connect wallet.");
+    }
+  } else {
+    alert("MetaMask is not installed. Please install it to continue.");
+  }
+}
