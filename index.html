@@ -27,7 +27,7 @@
       font-size: 1.8em;
       padding: 0 12px;
     }
-    .instructions, .join-box {
+    .instructions, .join-box, .admin-panel {
       background-color: #ffd141;
       color: black;
       max-width: 700px;
@@ -70,14 +70,7 @@
       margin: 0 10px;
       font-size: 0.9em;
     }
-    #adminBtn {
-      background-color: red;
-      color: white;
-      padding: 8px 14px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
+    #adminPanel {
       display: none;
     }
     @media (max-width: 480px) {
@@ -120,9 +113,28 @@
       <option value="Cornbread Region">Cornbread Region</option>
     </select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
-    <button id="adminBtn">Distribute Weekly Rewards</button>
   </div>
+
   <div id="standingsBox" class="join-box">Weekly Region Standings<br/>Loading...</div>
+
+  <div id="adminPanel" class="admin-panel">
+    <strong>Admin Reward Distribution Panel</strong>
+    <p>Select a region to distribute or burn the weekly reward.</p>
+    <select id="adminRegionSelect">
+      <option value="">-- Select Region --</option>
+      <option value="Sourdough Region">Sourdough Region</option>
+      <option value="Wheat Region">Wheat Region</option>
+      <option value="White Region">White Region</option>
+      <option value="Brioche Region">Brioche Region</option>
+      <option value="Pita Region">Pita Region</option>
+      <option value="Rye Region">Rye Region</option>
+      <option value="Cornbread Region">Cornbread Region</option>
+    </select>
+    <br/><br/>
+    <button id="distributeBtn" class="button join">Distribute Reward</button>
+    <button id="burnBtn" class="button connect">Burn + Rollover</button>
+  </div>
+
   <footer>
     <a href="https://polygonscan.com/token/0x284414b6777872E6DD8982394Fed1779dc87a3Cf#code">$BOWWW Token</a> |
     <a href="https://polygonscan.com/address/0x403C73A921FB11375816d4F035FC1711229F2b7F">Game Contract</a> |
@@ -137,7 +149,7 @@ const CONTRACT_ABI = [
   "function getRegions() view returns (string[] memory)",
   "function getHolderCount(string region) view returns (uint256)",
   "function getWeeklyThreshold(uint256) view returns (uint256)",
-  "function distributeRewards()"
+  "function distributeReward(string,uint256)"
 ];
 
 let provider, signer, userAddress = "";
@@ -152,7 +164,7 @@ async function connectWallet() {
     document.getElementById("walletStatus").style.color = "black";
     document.getElementById("joinBtn").disabled = false;
     if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
-      document.getElementById("adminBtn").style.display = "inline-block";
+      document.getElementById("adminPanel").style.display = "block";
     }
     loadRegionStandings();
   } else {
@@ -197,16 +209,22 @@ document.getElementById("joinBtn").onclick = async () => {
   }
 };
 
-document.getElementById("adminBtn").onclick = async () => {
+document.getElementById("distributeBtn").onclick = async () => {
+  const region = document.getElementById("adminRegionSelect").value;
+  if (!region) return alert("Please select a region");
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
   try {
-    const tx = await contract.distributeRewards();
+    const tx = await contract.distributeReward(region, 1);
     await tx.wait();
     alert("Rewards distributed successfully!");
     loadRegionStandings();
   } catch (e) {
     alert("Distribution failed: " + e.message);
   }
+};
+
+document.getElementById("burnBtn").onclick = () => {
+  alert("Burn + Rollover will be implemented in final contract deployment.");
 };
 
 window.addEventListener("load", loadRegionStandings);
