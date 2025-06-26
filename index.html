@@ -55,7 +55,7 @@
     .metamask { background-color: #ffffff; color: black; }
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
-    .connected-address { color: black; }
+    .connected-address { color: black !important; }
     select {
       padding: 8px;
       border-radius: 6px;
@@ -131,7 +131,7 @@
 </main>
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-const ADMIN_ADDRESS = "0x40728a6bD1f2eFD1C1aAA5081cf1437B8771D7b6"; // Inserted actual admin wallet
+const ADMIN_ADDRESS = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
 const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
