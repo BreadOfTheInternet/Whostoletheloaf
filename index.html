@@ -37,8 +37,7 @@
     }
 
     .instructions,
-    .join-box,
-    .standings-box {
+    .join-box {
       background-color: #ffd141;
       color: black;
       max-width: 700px;
@@ -48,6 +47,16 @@
       border-radius: 14px;
       text-align: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+    .status,
+    select,
+    #joinBtn {
+      margin: 10px auto;
+      display: block;
+    }
+
+    .instructions ul {
+      padding-left: 1.5em;
     }
 
     .button-group {
@@ -67,18 +76,40 @@
       cursor: pointer;
     }
 
-    .connect { background-color: #8000c9; color: white; }
-    .metamask { background-color: #ffffff; color: black; }
-    .join { background-color: #eeeeee; color: black; }
+    .connect {
+      background-color: #8000c9;
+      color: white;
+    }
 
-    .status { font-weight: bold; margin-bottom: 1em; }
-    .connected-address { color: green; }
-    select { padding: 8px; border-radius: 6px; margin-right: 10px; }
-    #joinBtn:disabled { background-color: #ccc; color: #666; cursor: not-allowed; }
+    .metamask {
+      background-color: #ffffff;
+      color: black;
+    }
 
-    .region-data {
-      margin-top: 1em;
-      font-size: 0.95em;
+    .join {
+      background-color: #eeeeee;
+      color: black;
+    }
+
+    .status {
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+
+    .connected-address {
+      color: green;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+
+    #joinBtn:disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
     }
 
     footer {
@@ -91,6 +122,25 @@
       margin: 0 10px;
       font-size: 0.9em;
     }
+
+    @media (max-width: 480px) {
+      .button-group {
+        flex-direction: column;
+      }
+
+      select {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      header img {
+        width: 90px;
+      }
+
+      h1 {
+        font-size: 1.4em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -99,107 +149,107 @@
   <img src="matic.PNG" alt="Matic Logo" />
 </header>
 
-<main>
-  <h1>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</h1>
-  <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
+  <main>
+    <h1>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</h1>
+    <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
 
-  <div class="instructions">
-    <strong>How to Join:</strong>
-    <ul>
-      <li>Click <b>"Connect Wallet"</b> to link your MetaMask wallet.</li>
-      <li>Mobile users: click <b>"Open in MetaMask"</b> to launch inside MetaMask browser.</li>
-      <li>Select your region — this cannot be changed after you join.</li>
-      <li>Click <b>"Join for 3.69 MATIC"</b> and confirm the transaction in MetaMask.</li>
-      <li>You'll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
-      <li><b>Make sure your wallet is on the Polygon Network (Chain ID: 137).</b></li>
-    </ul>
-  </div>
-
-  <div class="join-box">
-    <div class="button-group">
-      <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
-      <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" class="button metamask">Open in MetaMask</a>
+    <div class="instructions">
+      <strong>How to Join:</strong>
+      <ul>
+        <li>Click <b>"Connect Wallet"</b> to link your MetaMask wallet.</li>
+        <li>Mobile users: click <b>"Open in MetaMask"</b> to launch inside MetaMask browser.</li>
+        <li>Select your region — this cannot be changed after you join.</li>
+        <li>Click <b>"Join for 3.69 MATIC"</b> and confirm the transaction in MetaMask.</li>
+        <li>You'll get 1361.6 $BOWWW and your wallet will be eligible for regional rewards.</li>
+        <li><b>Make sure your wallet is on the Polygon Network (Chain ID: 137).</b></li>
+      </ul>
     </div>
-    <div class="status">
-      Connected: <span id="walletStatus" class="connected-address">Not connected</span>
+
+    <div class="join-box">
+      <div class="button-group">
+        <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
+        <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" class="button metamask">Open in MetaMask</a>
+      </div>
+      <div class="status">
+        Connected: <span id="walletStatus" class="connected-address">Not connected</span>
+      </div>
+      <select id="regionSelect">
+        <option value="Sourdough Region">Sourdough Region</option>
+        <option value="Wheat Region">Wheat Region</option>
+        <option value="White Region">White Region</option>
+        <option value="Brioche Region">Brioche Region</option>
+        <option value="Pita Region">Pita Region</option>
+        <option value="Rye Region">Rye Region</option>
+        <option value="Cornbread Region">Cornbread Region</option>
+      </select>
+      <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
     </div>
-    <select id="regionSelect">
-      <option value="North America">North America</option>
-      <option value="South America">South America</option>
-      <option value="Europe">Europe</option>
-      <option value="Asia">Asia</option>
-      <option value="Africa">Africa</option>
-      <option value="Oceania">Oceania</option>
-    </select>
-    <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
-  </div>
 
-  <div class="standings-box">
-    <h3>Weekly Region Standings</h3>
-    <div id="regionStats">Loading...</div>
-  </div>
+    <footer>
+      <a href="https://polygonscan.com/token/0x284414b6777872e6dd8982394fed1779dc87a3cf#code" target="_blank">$BOWWW Token</a> |
+      <a href="https://polygonscan.com/address/0x403C73A921FB11375816d4F035FC1711229F2b7F" target="_blank">Game Contract</a> |
+      <a href="https://linktr.ee/breadoftheinternet" target="_blank">More Info</a>
+    </footer>
+  </main>
 
-  <footer>
-    <a href="https://polygonscan.com/address/0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006" target="_blank">Contract on Polygonscan</a> |
-    <a href="https://breadoftheinternet.github.io/bowww-dapp/">Buy $BOWWW</a> |
-    <a href="https://linktr.ee/breadoftheinternet">More Info</a>
-  </footer>
-</main>
+  <script>
+    const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
+    const joinPrice = "3.69";
+    let provider, signer, userAddress = "";
 
-<script>
-  const gameContractAddress = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-  const bowwwABI = [
-    "function getRegions() view returns (string[])",
-    "function getHolderCount(string region) view returns (uint256)",
-    "function getWeeklyThreshold(uint256 week) pure returns (uint256)"
-  ];
+    const connectWalletBtn = document.getElementById("connectWalletBtn");
+    const joinBtn = document.getElementById("joinBtn");
+    const walletStatus = document.getElementById("walletStatus");
+    const regionSelect = document.getElementById("regionSelect");
 
-  async function loadRegionStandings() {
-    if (!window.ethereum) {
-      document.getElementById("standingsBox").innerHTML = "MetaMask required to load data.";
-      return;
-    }
+    connectWalletBtn.addEventListener("click", async () => {
+      if (window.ethereum) {
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = provider.getSigner();
+          userAddress = await signer.getAddress();
+          walletStatus.textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+          walletStatus.style.color = "green";
+          joinBtn.disabled = false;
+        } catch (err) {
+          console.error(err);
+          walletStatus.textContent = "Connection failed";
+          walletStatus.style.color = "red";
+        }
+      } else {
+        alert("MetaMask not found. Please install MetaMask.");
+      }
+    });
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const contract = new ethers.Contract(gameContractAddress, bowwwABI, provider);
-
-    try {
-      const regions = await contract.getRegions();
-      const currentWeek = 1; // You can dynamically track this later
-      const threshold = await contract.getWeeklyThreshold(currentWeek);
-
-      let standingsHTML = `
-        <table style="margin:auto; text-align:left; background:white; color:black; border-radius:12px; padding:12px; font-size:14px;">
-          <tr><th>Region</th><th>Holders</th><th>Status</th></tr>
-      `;
-
-      for (const region of regions) {
-        const count = await contract.getHolderCount(region);
-        const met = count >= threshold;
-        standingsHTML += `
-          <tr>
-            <td>${region}</td>
-            <td>${count}</td>
-            <td>${met ? "✅ Met" : "❌ Not Met"}</td>
-          </tr>
-        `;
+    joinBtn.addEventListener("click", async () => {
+      if (!signer) {
+        alert("Please connect your wallet first.");
+        return;
       }
 
-      standingsHTML += `</table>`;
-      document.getElementById("standingsBox").innerHTML = standingsHTML;
+      const region = regionSelect.value;
 
-    } catch (err) {
-      console.error(err);
-      document.getElementById("standingsBox").innerHTML = "Error loading standings.";
-    }
-  }
+      try {
+        const tx = await signer.sendTransaction({
+          to: adminWallet,
+          value: ethers.utils.parseEther(joinPrice)
+        });
 
-  // Auto-load on page open
-  window.addEventListener("load", loadRegionStandings);
-</script>
+        await tx.wait();
 
+        const txHash = tx.hash;
+        alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region}!
+\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
+      } catch (err) {
+        console.error(err);
+        alert("Transaction failed. Please check your wallet, network, or contract logic.");
+      }
+    });
+  </script>
 </body>
 </html>
+
 
 
 
