@@ -55,7 +55,7 @@
     .metamask { background-color: #ffffff; color: black; }
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
-    .connected-address { color: green; }
+    .connected-address { color: #ffd141; }
     select {
       padding: 8px;
       border-radius: 6px;
@@ -113,6 +113,7 @@
       <option value="Cornbread Region">Cornbread Region</option>
     </select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
+    <button id="distributeBtn" class="button join" style="margin-top: 10px; display:none">Distribute Rewards</button>
   </div>
 
   <div id="standingsBox" class="join-box">
@@ -128,11 +129,15 @@
 
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
+const ADMIN_ADDRESS = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
+
 const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
   "function getHolderCount(string region) view returns (uint256)",
-  "function getWeeklyThreshold(uint256) view returns (uint256)"
+  "function getWeeklyThreshold(uint256) view returns (uint256)",
+  "function getCurrentWeek() view returns (uint256)",
+  "function distributeWeeklyReward()"
 ];
 
 let provider, signer, userAddress = "";
@@ -144,17 +149,30 @@ async function connectWallet() {
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
     document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-    document.getElementById("walletStatus").style.color = "lightgreen";
+    document.getElementById("walletStatus").className = "connected-address";
     document.getElementById("joinBtn").disabled = false;
+    if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
+      document.getElementById("distributeBtn").style.display = "inline-block";
+    }
     loadRegionStandings();
   } else {
     alert("Please install MetaMask.");
   }
 }
 
-document.getElementById("connectWalletBtn").onclick = connectWallet;
+async function distributeRewards() {
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+  try {
+    const tx = await contract.distributeWeeklyReward();
+    await tx.wait();
+    alert("Rewards distributed! TX: https://polygonscan.com/tx/" + tx.hash);
+    loadRegionStandings();
+  } catch (e) {
+    alert("Reward distribution failed: " + e.message);
+  }
+}
 
-document.getElementById("joinBtn").onclick = async () => {
+async function joinGame() {
   const region = document.getElementById("regionSelect").value;
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
   try {
@@ -168,16 +186,17 @@ document.getElementById("joinBtn").onclick = async () => {
     alert("Transaction failed: " + e.message);
     console.error(e);
   }
-};
+}
 
 async function loadRegionStandings() {
   const standingsDiv = document.getElementById("standingsBox");
   const readProvider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
   try {
+    const week = await contract.getCurrentWeek();
     const regions = await contract.getRegions();
-    const threshold = await contract.getWeeklyThreshold(1);
-    let html = `<strong>Weekly Region Standings (Week 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+    const threshold = await contract.getWeeklyThreshold(week);
+    let html = `<strong>Weekly Region Standings (Week ${week})</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
 
     for (const region of regions) {
       const count = await contract.getHolderCount(region);
@@ -192,10 +211,15 @@ async function loadRegionStandings() {
   }
 }
 
+document.getElementById("connectWalletBtn").onclick = connectWallet;
+document.getElementById("joinBtn").onclick = joinGame;
+document.getElementById("distributeBtn").onclick = distributeRewards;
+
 window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
+
 
 
 
