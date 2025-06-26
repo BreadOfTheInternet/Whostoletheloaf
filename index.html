@@ -114,6 +114,8 @@
     </select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
   </div>
+const currentWeek = 1; // For now this is fixed until a dynamic tracker is added
+let html = `<strong>Weekly Region Standings (Week ${currentWeek})</strong>`;
 
   <div id="standingsBox" class="join-box">
     Weekly Region Standings<br/>Loading...
@@ -146,20 +148,22 @@
     }
   };
 
-  document.getElementById("joinBtn").onclick = async () => {
-    const region = document.getElementById("regionSelect").value;
-    try {
-      const tx = await signer.sendTransaction({
-        to: ADMIN_ADDRESS,
-        value: ethers.utils.parseEther("3.69")
-      });
-      await tx.wait();
-      alert(`Joined ${region}! TX: https://polygonscan.com/tx/${tx.hash}`);
-    } catch (e) {
-      alert("Transaction failed.");
-      console.error(e);
-    }
-  };
+document.getElementById("joinBtn").onclick = async () => {
+  const region = document.getElementById("regionSelect").value;
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+  try {
+    const tx = await contract.joinGame(region, {
+      value: ethers.utils.parseEther("3.69")
+    });
+    await tx.wait();
+    alert(`Joined ${region}! TX: https://polygonscan.com/tx/${tx.hash}`);
+    loadRegionStandings(); // Refresh standings after join
+  } catch (e) {
+    alert("Transaction failed: " + e.message);
+    console.error(e);
+  }
+};
+
 
   async function loadRegionStandings() {
     const standingsDiv = document.getElementById("standingsBox");
