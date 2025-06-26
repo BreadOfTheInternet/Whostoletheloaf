@@ -55,7 +55,7 @@
     .metamask { background-color: #ffffff; color: black; }
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
-    .connected-address { color: black; }
+    .connected-address { color: #ffd141; }
     select {
       padding: 8px;
       border-radius: 6px;
@@ -131,7 +131,7 @@
 </main>
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-const ADMIN_ADDRESS = "0xYourAdminWalletAddressHere"; // replace this with your actual admin wallet
+const ADMIN_ADDRESS = "0xYourAdminWalletAddressHere"; // Replace with your admin wallet
 const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
@@ -149,7 +149,7 @@ async function connectWallet() {
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
     document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-    document.getElementById("walletStatus").style.color = "black";
+    document.getElementById("walletStatus").style.color = "#ffd141";
     document.getElementById("joinBtn").disabled = false;
     if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
       document.getElementById("adminBtn").style.display = "inline-block";
@@ -213,6 +213,7 @@ window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
+
 
 
 
