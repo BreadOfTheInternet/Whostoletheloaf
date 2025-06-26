@@ -146,7 +146,7 @@ async function connectWallet() {
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
     document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-    document.getElementById("walletStatus").style.color = "#ffd141";
+document.getElementById("walletStatus").style.color = "black";
     document.getElementById("joinBtn").disabled = false;
     loadRegionStandings();
   } else {
