@@ -114,8 +114,6 @@
     </select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
   </div>
-const currentWeek = 1; // For now this is fixed until a dynamic tracker is added
-let html = `<strong>Weekly Region Standings (Week ${currentWeek})</strong>`;
 
   <div id="standingsBox" class="join-box">
     Weekly Region Standings<br/>Loading...
@@ -129,24 +127,32 @@ let html = `<strong>Weekly Region Standings (Week ${currentWeek})</strong>`;
 </main>
 
 <script>
-  const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-  const ADMIN_ADDRESS = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
+const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
+const CONTRACT_ABI = [
+  "function joinGame(string region) payable",
+  "function getRegions() view returns (string[] memory)",
+  "function getHolderCount(string region) view returns (uint256)",
+  "function getWeeklyThreshold(uint256) view returns (uint256)"
+];
 
-  let provider, signer, userAddress = "";
+let provider, signer, userAddress = "";
 
-  document.getElementById("connectWalletBtn").onclick = async () => {
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      userAddress = await signer.getAddress();
-      document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-      document.getElementById("walletStatus").style.color = "lightgreen";
-      document.getElementById("joinBtn").disabled = false;
-    } else {
-      alert("Please install MetaMask.");
-    }
-  };
+async function connectWallet() {
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+    document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+    document.getElementById("walletStatus").style.color = "lightgreen";
+    document.getElementById("joinBtn").disabled = false;
+    loadRegionStandings();
+  } else {
+    alert("Please install MetaMask.");
+  }
+}
+
+document.getElementById("connectWalletBtn").onclick = connectWallet;
 
 document.getElementById("joinBtn").onclick = async () => {
   const region = document.getElementById("regionSelect").value;
@@ -157,30 +163,21 @@ document.getElementById("joinBtn").onclick = async () => {
     });
     await tx.wait();
     alert(`Joined ${region}! TX: https://polygonscan.com/tx/${tx.hash}`);
-    loadRegionStandings(); // Refresh standings after join
+    loadRegionStandings();
   } catch (e) {
     alert("Transaction failed: " + e.message);
     console.error(e);
   }
 };
 
-
-  async function loadRegionStandings() {
-    const standingsDiv = document.getElementById("standingsBox");
-    if (!window.ethereum) return;
-
-    const bowwwABI = [
-      "function getRegions() view returns (string[])",
-      "function getHolderCount(string region) view returns (uint256)",
-      "function getWeeklyThreshold(uint256) view returns (uint256)"
-    ];
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, bowwwABI, provider);
-
+async function loadRegionStandings() {
+  const standingsDiv = document.getElementById("standingsBox");
+  const readProvider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
+  try {
     const regions = await contract.getRegions();
     const threshold = await contract.getWeeklyThreshold(1);
-    let html = `<strong>Weekly Region Standings</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+    let html = `<strong>Weekly Region Standings (Week 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
 
     for (const region of regions) {
       const count = await contract.getHolderCount(region);
@@ -189,9 +186,13 @@ document.getElementById("joinBtn").onclick = async () => {
     }
     html += `</table>`;
     standingsDiv.innerHTML = html;
+  } catch (err) {
+    standingsDiv.innerHTML = "Failed to load standings.";
+    console.error(err);
   }
+}
 
-  window.addEventListener("load", loadRegionStandings);
+window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
