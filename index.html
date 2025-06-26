@@ -70,16 +70,6 @@
       margin: 0 10px;
       font-size: 0.9em;
     }
-    #adminBtn {
-      background-color: red;
-      color: white;
-      padding: 8px 14px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      display: none;
-    }
     @media (max-width: 480px) {
       .button-group { flex-direction: column; }
       header img { width: 90px; }
@@ -92,9 +82,11 @@
   <img src="$BOWWW.PNG" alt="$BOWWW Logo" />
   <img src="matic.PNG" alt="Matic Logo" />
 </header>
+
 <main>
   <h1>Who Stole The Loaf? Powered By $BOWWW</h1>
   <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
+
   <div class="instructions">
     <strong>How to Join:</strong>
     <ul>
@@ -104,12 +96,13 @@
       <li>Receive 1107 $BOWWW and lock in your region</li>
     </ul>
   </div>
+
   <div class="join-box">
     <div class="button-group">
       <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
       <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" class="button metamask">Open in MetaMask</a>
     </div>
-    <div class="status">Connected: <span id="walletStatus" class="connected-address">Not connected</span></div>
+    <div class="status">Connected: <span id="walletStatus">Not connected</span></div>
     <select id="regionSelect">
       <option value="Sourdough Region">Sourdough Region</option>
       <option value="Wheat Region">Wheat Region</option>
@@ -120,23 +113,27 @@
       <option value="Cornbread Region">Cornbread Region</option>
     </select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
-    <button id="adminBtn">Distribute Weekly Rewards</button>
   </div>
-  <div id="standingsBox" class="join-box">Weekly Region Standings<br/>Loading...</div>
+
+  <div id="standingsBox" class="join-box">
+    Weekly Region Standings<br/>Loading...
+  </div>
+
   <footer>
     <a href="https://polygonscan.com/token/0x284414b6777872E6DD8982394Fed1779dc87a3Cf#code">$BOWWW Token</a> |
     <a href="https://polygonscan.com/address/0x403C73A921FB11375816d4F035FC1711229F2b7F">Game Contract</a> |
     <a href="https://linktr.ee/breadoftheinternet">More Info</a>
   </footer>
 </main>
+
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-const ADMIN_ADDRESS = "0xYourAdminWalletAddressHere"; // Replace with your admin wallet
 const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
   "function getHolderCount(string region) view returns (uint256)",
   "function getWeeklyThreshold(uint256) view returns (uint256)",
+  "function getCurrentWeek() view returns (uint256)",
   "function distributeRewards()"
 ];
 
@@ -151,9 +148,6 @@ async function connectWallet() {
     document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
     document.getElementById("walletStatus").style.color = "#ffd141";
     document.getElementById("joinBtn").disabled = false;
-    if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
-      document.getElementById("adminBtn").style.display = "inline-block";
-    }
     loadRegionStandings();
   } else {
     alert("Please install MetaMask.");
@@ -162,18 +156,20 @@ async function connectWallet() {
 
 async function loadRegionStandings() {
   const standingsDiv = document.getElementById("standingsBox");
+  const readProvider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
   try {
-    const readProvider = new ethers.providers.Web3Provider(window.ethereum);
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
     const regions = await contract.getRegions();
-    const threshold = await contract.getWeeklyThreshold(1);
-    let html = `<strong>Weekly Region Standings (Active Week: 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+    const currentWeek = await contract.getCurrentWeek();
+    const threshold = await contract.getWeeklyThreshold(currentWeek);
+    let html = `<strong>Weekly Region Standings (Week ${currentWeek})</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+
     for (const region of regions) {
       const count = await contract.getHolderCount(region);
       const met = count >= threshold ? "✅ Met" : "❌ Not Met";
       html += `<tr><td>${region}</td><td>${count}</td><td>${met}</td></tr>`;
     }
-    html += `</table>`;
+    html += `</table><br/><button onclick="distributeRewards()" class="button join">Distribute Rewards</button>`;
     standingsDiv.innerHTML = html;
   } catch (err) {
     standingsDiv.innerHTML = "Failed to load standings.";
@@ -181,7 +177,20 @@ async function loadRegionStandings() {
   }
 }
 
+async function distributeRewards() {
+  try {
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    const tx = await contract.distributeRewards();
+    await tx.wait();
+    alert("Rewards distributed successfully!");
+  } catch (err) {
+    alert("Distribution failed or you are not the admin.");
+    console.error(err);
+  }
+}
+
 document.getElementById("connectWalletBtn").onclick = connectWallet;
+
 document.getElementById("joinBtn").onclick = async () => {
   const region = document.getElementById("regionSelect").value;
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
@@ -194,18 +203,7 @@ document.getElementById("joinBtn").onclick = async () => {
     loadRegionStandings();
   } catch (e) {
     alert("Transaction failed: " + e.message);
-  }
-};
-
-document.getElementById("adminBtn").onclick = async () => {
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-  try {
-    const tx = await contract.distributeRewards();
-    await tx.wait();
-    alert("Rewards distributed successfully!");
-    loadRegionStandings();
-  } catch (e) {
-    alert("Distribution failed: " + e.message);
+    console.error(e);
   }
 };
 
@@ -213,6 +211,7 @@ window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
+
 
 
 
