@@ -37,25 +37,23 @@
     }
 
     .instructions,
-.join-box {
-  background-color: #ffd141;
-  color: black;
-  max-width: 700px;
-  width: 90%;
-  margin: 1.5em auto;
-  padding: 1.5em;
-  border-radius: 14px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-}
-.status,
-select,
-#joinBtn {
-  margin: 10px auto;
-  display: block;
-}
-
-
+    .join-box {
+      background-color: #ffd141;
+      color: black;
+      max-width: 700px;
+      width: 90%;
+      margin: 1.5em auto;
+      padding: 1.5em;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+    .status,
+    select,
+    #joinBtn {
+      margin: 10px auto;
+      display: block;
+    }
 
     .instructions ul {
       padding-left: 1.5em;
@@ -151,7 +149,6 @@ select,
   <img src="matic.PNG" alt="Matic Logo" />
 </header>
 
-
   <main>
     <h1>Who Stole The Loaf? Powered By $BOWWW Bread Of the World Wide Web</h1>
     <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
@@ -177,29 +174,27 @@ select,
         Connected: <span id="walletStatus" class="connected-address">Not connected</span>
       </div>
       <select id="regionSelect">
-        <option value="North America">North America</option>
-        <option value="South America">South America</option>
-        <option value="Europe">Europe</option>
-        <option value="Asia">Asia</option>
-        <option value="Africa">Africa</option>
-        <option value="Oceania">Oceania</option>
+        <option value="Sourdough Region">Sourdough Region</option>
+        <option value="Wheat Region">Wheat Region</option>
+        <option value="White Region">White Region</option>
+        <option value="Brioche Region">Brioche Region</option>
+        <option value="Pita Region">Pita Region</option>
+        <option value="Rye Region">Rye Region</option>
+        <option value="Cornbread Region">Cornbread Region</option>
       </select>
       <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
     </div>
 
     <footer>
-      <a href="https://polygonscan.com/address/0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006" target="_blank">Contract on Polygonscan</a> |
-      <a href="https://breadoftheinternet.github.io/bowww-dapp/">Buy $BOWWW</a> |
-      <a href="#">More Info</a>
+      <a href="https://polygonscan.com/token/0x284414b6777872e6dd8982394fed1779dc87a3cf#code" target="_blank">$BOWWW Token</a> |
+      <a href="https://polygonscan.com/address/0x403C73A921FB11375816d4F035FC1711229F2b7F" target="_blank">Game Contract</a> |
+      <a href="https://linktr.ee/breadoftheinternet" target="_blank">More Info</a>
     </footer>
   </main>
 
   <script>
-    const CONTRACT_ADDRESS = "0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006";
     const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
     const joinPrice = "3.69";
-    const rewardAmount = "1361.6";
-
     let provider, signer, userAddress = "";
 
     const connectWalletBtn = document.getElementById("connectWalletBtn");
@@ -244,7 +239,8 @@ select,
         await tx.wait();
 
         const txHash = tx.hash;
-        alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region} region!\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
+        alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region}!
+\nView on Polygonscan:\nhttps://polygonscan.com/tx/${txHash}`);
       } catch (err) {
         console.error(err);
         alert("Transaction failed. Please check your wallet, network, or contract logic.");
