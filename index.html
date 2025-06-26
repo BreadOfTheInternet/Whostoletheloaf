@@ -147,68 +147,57 @@
 </main>
 
 <script>
-  const CONTRACT_ADDRESS = "0xfa6f18448bf3d9c10a8CabC50ad1C603C08CC006";
-  const adminWallet = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
-  const joinPrice = "3.69";
-  const regionStats = document.getElementById("regionStats");
-  let provider, signer, userAddress = "";
+  const gameContractAddress = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
+  const bowwwABI = [
+    "function getRegions() view returns (string[])",
+    "function getHolderCount(string region) view returns (uint256)",
+    "function getWeeklyThreshold(uint256 week) pure returns (uint256)"
+  ];
 
-  const connectWalletBtn = document.getElementById("connectWalletBtn");
-  const joinBtn = document.getElementById("joinBtn");
-  const walletStatus = document.getElementById("walletStatus");
-  const regionSelect = document.getElementById("regionSelect");
-
-  connectWalletBtn.addEventListener("click", async () => {
-    if (window.ethereum) {
-      try {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        userAddress = await signer.getAddress();
-        walletStatus.textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-        walletStatus.style.color = "green";
-        joinBtn.disabled = false;
-        loadStandings();
-      } catch (err) {
-        console.error(err);
-        walletStatus.textContent = "Connection failed";
-        walletStatus.style.color = "red";
-      }
-    } else {
-      alert("MetaMask not found. Please install MetaMask.");
+  async function loadRegionStandings() {
+    if (!window.ethereum) {
+      document.getElementById("standingsBox").innerHTML = "MetaMask required to load data.";
+      return;
     }
-  });
 
-  joinBtn.addEventListener("click", async () => {
-    if (!signer) return alert("Please connect your wallet first.");
-    const region = regionSelect.value;
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(gameContractAddress, bowwwABI, provider);
+
     try {
-      const tx = await signer.sendTransaction({
-        to: adminWallet,
-        value: ethers.utils.parseEther(joinPrice)
-      });
-      await tx.wait();
-      alert(`Wallet ${userAddress.slice(0, 6)}...${userAddress.slice(-4)} has joined Who Stole The Loaf representing the ${region} region!\n\nView on Polygonscan:\nhttps://polygonscan.com/tx/${tx.hash}`);
-      loadStandings();
+      const regions = await contract.getRegions();
+      const currentWeek = 1; // You can dynamically track this later
+      const threshold = await contract.getWeeklyThreshold(currentWeek);
+
+      let standingsHTML = `
+        <table style="margin:auto; text-align:left; background:white; color:black; border-radius:12px; padding:12px; font-size:14px;">
+          <tr><th>Region</th><th>Holders</th><th>Status</th></tr>
+      `;
+
+      for (const region of regions) {
+        const count = await contract.getHolderCount(region);
+        const met = count >= threshold;
+        standingsHTML += `
+          <tr>
+            <td>${region}</td>
+            <td>${count}</td>
+            <td>${met ? "✅ Met" : "❌ Not Met"}</td>
+          </tr>
+        `;
+      }
+
+      standingsHTML += `</table>`;
+      document.getElementById("standingsBox").innerHTML = standingsHTML;
+
     } catch (err) {
       console.error(err);
-      alert("Transaction failed.");
+      document.getElementById("standingsBox").innerHTML = "Error loading standings.";
     }
-  });
-
-  async function loadStandings() {
-    // Placeholder — in production replace with contract calls
-    const mock = [
-      { name: "North America", holders: 51, thresholdMet: true },
-      { name: "Europe", holders: 42, thresholdMet: false },
-      { name: "Asia", holders: 60, thresholdMet: true },
-      { name: "Africa", holders: 28, thresholdMet: false },
-      { name: "South America", holders: 39, thresholdMet: false },
-      { name: "Oceania", holders: 53, thresholdMet: true }
-    ];
-    regionStats.innerHTML = mock.map(r => `<div class='region-data'><b>${r.name}</b>: ${r.holders} holders — ${r.thresholdMet ? '✅' : '❌'}</div>`).join('');
   }
+
+  // Auto-load on page open
+  window.addEventListener("load", loadRegionStandings);
 </script>
+
 </body>
 </html>
 
