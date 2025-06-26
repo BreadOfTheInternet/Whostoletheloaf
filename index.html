@@ -55,7 +55,7 @@
     .metamask { background-color: #ffffff; color: black; }
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
-    .connected-address { color: green; }
+    .connected-address { color: #ffd141; }
     select {
       padding: 8px;
       border-radius: 6px;
@@ -132,7 +132,9 @@ const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
   "function getHolderCount(string region) view returns (uint256)",
-  "function getWeeklyThreshold(uint256) view returns (uint256)"
+  "function getWeeklyThreshold(uint256) view returns (uint256)",
+  "function getCurrentWeek() view returns (uint256)",
+  "function distributeRewards()"
 ];
 
 let provider, signer, userAddress = "";
@@ -144,11 +146,46 @@ async function connectWallet() {
     signer = provider.getSigner();
     userAddress = await signer.getAddress();
     document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-    document.getElementById("walletStatus").style.color = "lightgreen";
+    document.getElementById("walletStatus").style.color = "#ffd141";
     document.getElementById("joinBtn").disabled = false;
     loadRegionStandings();
   } else {
     alert("Please install MetaMask.");
+  }
+}
+
+async function loadRegionStandings() {
+  const standingsDiv = document.getElementById("standingsBox");
+  const readProvider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
+  try {
+    const regions = await contract.getRegions();
+    const currentWeek = await contract.getCurrentWeek();
+    const threshold = await contract.getWeeklyThreshold(currentWeek);
+    let html = `<strong>Weekly Region Standings (Week ${currentWeek})</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+
+    for (const region of regions) {
+      const count = await contract.getHolderCount(region);
+      const met = count >= threshold ? "✅ Met" : "❌ Not Met";
+      html += `<tr><td>${region}</td><td>${count}</td><td>${met}</td></tr>`;
+    }
+    html += `</table><br/><button onclick="distributeRewards()" class="button join">Distribute Rewards</button>`;
+    standingsDiv.innerHTML = html;
+  } catch (err) {
+    standingsDiv.innerHTML = "Failed to load standings.";
+    console.error(err);
+  }
+}
+
+async function distributeRewards() {
+  try {
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    const tx = await contract.distributeRewards();
+    await tx.wait();
+    alert("Rewards distributed successfully!");
+  } catch (err) {
+    alert("Distribution failed or you are not the admin.");
+    console.error(err);
   }
 }
 
@@ -162,7 +199,7 @@ document.getElementById("joinBtn").onclick = async () => {
       value: ethers.utils.parseEther("3.69")
     });
     await tx.wait();
-    alert(Joined ${region}! TX: https://polygonscan.com/tx/${tx.hash});
+    alert(`Joined ${region}! TX: https://polygonscan.com/tx/${tx.hash}`);
     loadRegionStandings();
   } catch (e) {
     alert("Transaction failed: " + e.message);
@@ -170,33 +207,10 @@ document.getElementById("joinBtn").onclick = async () => {
   }
 };
 
-async function loadRegionStandings() {
-  const standingsDiv = document.getElementById("standingsBox");
-  const readProvider = new ethers.providers.Web3Provider(window.ethereum);
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
-  try {
-    const regions = await contract.getRegions();
-    const threshold = await contract.getWeeklyThreshold(1);
-    let html = <strong>Weekly Region Standings (Week 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>;
-
-    for (const region of regions) {
-      const count = await contract.getHolderCount(region);
-      const met = count >= threshold ? "✅ Met" : "❌ Not Met";
-      html += <tr><td>${region}</td><td>${count}</td><td>${met}</td></tr>;
-    }
-    html += </table>;
-    standingsDiv.innerHTML = html;
-  } catch (err) {
-    standingsDiv.innerHTML = "Failed to load standings.";
-    console.error(err);
-  }
-}
-
 window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
-
 
 
 
