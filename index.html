@@ -27,7 +27,7 @@
       font-size: 1.8em;
       padding: 0 12px;
     }
-    .instructions, .join-box, .admin-panel {
+    .instructions, .join-box {
       background-color: #ffd141;
       color: black;
       max-width: 700px;
@@ -55,7 +55,7 @@
     .metamask { background-color: #ffffff; color: black; }
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
-    .connected-address { color: black !important; }
+    .connected-address { color: green; }
     select {
       padding: 8px;
       border-radius: 6px;
@@ -70,9 +70,6 @@
       margin: 0 10px;
       font-size: 0.9em;
     }
-    #adminPanel {
-      display: none;
-    }
     @media (max-width: 480px) {
       .button-group { flex-direction: column; }
       header img { width: 90px; }
@@ -85,9 +82,11 @@
   <img src="$BOWWW.PNG" alt="$BOWWW Logo" />
   <img src="matic.PNG" alt="Matic Logo" />
 </header>
+
 <main>
   <h1>Who Stole The Loaf? Powered By $BOWWW</h1>
   <p>Join the regional war for bread. Pay 3.69 MATIC. Earn $BOWWW.</p>
+
   <div class="instructions">
     <strong>How to Join:</strong>
     <ul>
@@ -97,43 +96,18 @@
       <li>Receive 1107 $BOWWW and lock in your region</li>
     </ul>
   </div>
+
   <div class="join-box">
     <div class="button-group">
       <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
       <a href="https://metamask.app.link/dapp/breadoftheinternet.github.io/Whostoletheloaf/" class="button metamask">Open in MetaMask</a>
     </div>
-    <div class="status">Connected: <span id="walletStatus" class="connected-address">Not connected</span></div>
-    <select id="regionSelect">
-      <option value="Sourdough Region">Sourdough Region</option>
-      <option value="Wheat Region">Wheat Region</option>
-      <option value="White Region">White Region</option>
-      <option value="Brioche Region">Brioche Region</option>
-      <option value="Pita Region">Pita Region</option>
-      <option value="Rye Region">Rye Region</option>
-      <option value="Cornbread Region">Cornbread Region</option>
-    </select>
+    <div class="status">Connected: <span id="walletStatus">Not connected</span></div>
+    <select id="regionSelect"></select>
     <button id="joinBtn" class="button join" disabled>Join for 3.69 MATIC</button>
   </div>
 
   <div id="standingsBox" class="join-box">Weekly Region Standings<br/>Loading...</div>
-
-  <div id="adminPanel" class="admin-panel">
-    <strong>Admin Reward Distribution Panel</strong>
-    <p>Select a region to distribute the weekly reward.</p>
-    <select id="adminRegionSelect">
-      <option value="">-- Select Region --</option>
-      <option value="Sourdough Region">Sourdough Region</option>
-      <option value="Wheat Region">Wheat Region</option>
-      <option value="White Region">White Region</option>
-      <option value="Brioche Region">Brioche Region</option>
-      <option value="Pita Region">Pita Region</option>
-      <option value="Rye Region">Rye Region</option>
-      <option value="Cornbread Region">Cornbread Region</option>
-    </select>
-    <br/><br/>
-    <button id="distributeBtn" class="button join">Distribute Reward</button>
-    <button id="burnBtn" class="button connect">Burn + Rollover</button>
-  </div>
 
   <footer>
     <a href="https://polygonscan.com/token/0x284414b6777872E6DD8982394Fed1779dc87a3Cf#code">$BOWWW Token</a> |
@@ -144,62 +118,35 @@
 
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-const ADMIN_ADDRESS = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
-
-const CONTRACT_ABI = [
-  "function joinGame(string region) payable",
+const ABI = [
   "function getRegions() view returns (string[] memory)",
-  "function getHolderCount(string region) view returns (uint256)",
+  "function getHolderCount(string memory) view returns (uint256)",
   "function getWeeklyThreshold(uint256) view returns (uint256)",
-  "function distributeReward(string,uint256)"
+  "function hasUserJoined(address) view returns (bool)",
+  "function joinGame(string memory region) payable"
 ];
 
 let provider, signer, userAddress = "";
 
 async function connectWallet() {
-  if (window.ethereum) {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    signer = provider.getSigner();
-    userAddress = await signer.getAddress();
-    document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-    document.getElementById("walletStatus").style.color = "black";
-    document.getElementById("joinBtn").disabled = false;
-    if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
-      document.getElementById("adminPanel").style.display = "block";
-    }
-    loadRegionStandings();
-  } else {
-    alert("Please install MetaMask.");
-  }
-}
-
-async function loadRegionStandings() {
-  const standingsDiv = document.getElementById("standingsBox");
-  try {
-    const readProvider = new ethers.providers.Web3Provider(window.ethereum);
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
-    const regions = await contract.getRegions();
-    const threshold = await contract.getWeeklyThreshold(1);
-    let html = `<strong>Weekly Region Standings (Active Week: 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
-    for (const region of regions) {
-      const count = await contract.getHolderCount(region);
-      const met = count >= threshold ? "✅ Met" : "❌ Not Met";
-      html += `<tr><td>${region}</td><td>${count}</td><td>${met}</td></tr>`;
-    }
-    html += `</table>`;
-    standingsDiv.innerHTML = html;
-  } catch (err) {
-    standingsDiv.innerHTML = "Failed to load standings.";
-    console.error(err);
-  }
+  if (!window.ethereum) return alert("Please install MetaMask.");
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+  userAddress = await signer.getAddress();
+  document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+  document.getElementById("walletStatus").style.color = "lightgreen";
+  await populateRegionDropdown();
+  document.getElementById("joinBtn").disabled = false;
 }
 
 document.getElementById("connectWalletBtn").onclick = connectWallet;
 
 document.getElementById("joinBtn").onclick = async () => {
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+  const hasJoined = await contract.hasUserJoined(userAddress);
+  if (hasJoined) return alert("You’ve already joined with this wallet.");
   const region = document.getElementById("regionSelect").value;
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
   try {
     const tx = await contract.joinGame(region, {
       value: ethers.utils.parseEther("3.69")
@@ -212,33 +159,41 @@ document.getElementById("joinBtn").onclick = async () => {
   }
 };
 
-document.getElementById("distributeBtn").onclick = async () => {
-  const region = document.getElementById("adminRegionSelect").value;
-  if (!region) return alert("Please select a region");
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-  try {
-    const tx = await contract.distributeReward(region, 1);
-    await tx.wait();
-    alert("Rewards distributed successfully!");
-    loadRegionStandings();
-  } catch (e) {
-    alert("Distribution failed: " + e.message);
+async function populateRegionDropdown() {
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+  const regions = await contract.getRegions();
+  const select = document.getElementById("regionSelect");
+  select.innerHTML = "";
+  regions.forEach(r => {
+    const opt = document.createElement("option");
+    opt.value = opt.textContent = r;
+    select.appendChild(opt);
+  });
+}
+
+async function loadRegionStandings() {
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+  const regions = await contract.getRegions();
+  const threshold = await contract.getWeeklyThreshold(1);
+  let html = `<strong>Weekly Region Standings (Week 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
+  for (const region of regions) {
+    const count = await contract.getHolderCount(region);
+    const met = count >= threshold ? "✅ Met" : "❌ Not Met";
+    html += `<tr><td>${region}</td><td>${count}</td><td>${met}</td></tr>`;
   }
-};
+  html += "</table>";
+  document.getElementById("standingsBox").innerHTML = html;
+}
 
-document.getElementById("burnBtn").onclick = () => {
-  alert("Burn + Rollover will be implemented in final contract deployment.");
-};
-
-window.addEventListener("load", loadRegionStandings);
+window.addEventListener("load", async () => {
+  if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    await loadRegionStandings();
+  }
+});
 </script>
 </body>
 </html>
-
-
-
-
-
 
 
 
