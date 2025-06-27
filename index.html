@@ -14,9 +14,12 @@
       text-align: center;
       color: white;
     }
+    header {
+      margin-top: 20px;
+    }
     header img {
       width: 120px;
-      margin: 20px 12px 0;
+      margin: 0 12px;
       vertical-align: middle;
     }
     h1 {
@@ -53,10 +56,11 @@
     .join { background-color: #eeeeee; color: black; }
     .status { margin: 10px auto; font-weight: bold; }
     .connected-address { color: black !important; }
-    select {
+    select, input[type="number"] {
       padding: 8px;
       border-radius: 6px;
       margin-top: 10px;
+      font-size: 14px;
     }
     footer {
       margin-top: 2em;
@@ -67,7 +71,9 @@
       margin: 0 10px;
       font-size: 0.9em;
     }
-    #adminPanel { display: none; }
+    #adminPanel {
+      display: none;
+    }
     @media (max-width: 480px) {
       .button-group { flex-direction: column; }
       header img { width: 90px; }
@@ -114,7 +120,8 @@
 
   <div id="adminPanel" class="admin-panel">
     <strong>Admin Reward Distribution Panel</strong>
-    <p>Select a region to distribute the weekly reward.</p>
+    <p>Select a region and week to distribute or burn the weekly reward.</p>
+    <p id="currentRewardDisplay"><strong>Current Week Reward Pool:</strong> Loading...</p>
     <select id="adminRegionSelect">
       <option value="">-- Select Region --</option>
       <option value="Sourdough Region">Sourdough Region</option>
@@ -126,6 +133,9 @@
       <option value="Cornbread Region">Cornbread Region</option>
     </select>
     <br/><br/>
+    <label for="weekInput">Week Number:</label>
+    <input type="number" id="weekInput" value="1" min="1" style="width: 80px;" />
+    <br/><br/>
     <button id="distributeBtn" class="button join">Distribute Reward</button>
     <button id="burnBtn" class="button connect">Burn + Rollover</button>
   </div>
@@ -136,11 +146,9 @@
     <a href="https://linktr.ee/breadoftheinternet">More Info</a>
   </footer>
 </main>
-
 <script>
 const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
 const ADMIN_ADDRESS = "0x40726Dbe406b8B79c88c0fa45D3caA8e3574D7b6";
-
 const CONTRACT_ABI = [
   "function joinGame(string region) payable",
   "function getRegions() view returns (string[] memory)",
@@ -163,7 +171,7 @@ async function connectWallet() {
     if (userAddress.toLowerCase() === ADMIN_ADDRESS.toLowerCase()) {
       document.getElementById("adminPanel").style.display = "block";
     }
-    await loadRegionStandings();
+    loadRegionStandings();
   } else {
     alert("Please install MetaMask.");
   }
@@ -171,13 +179,9 @@ async function connectWallet() {
 
 async function loadRegionStandings() {
   const standingsDiv = document.getElementById("standingsBox");
-  standingsDiv.innerHTML = "Loading...";
   try {
-    if (!provider) {
-      standingsDiv.innerHTML = "Please connect wallet to view standings.";
-      return;
-    }
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+    const readProvider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, readProvider);
     const regions = await contract.getRegions();
     const threshold = await contract.getWeeklyThreshold(1);
     let html = `<strong>Weekly Region Standings (Active Week: 1)</strong><table style='margin:auto;text-align:left;background:white;color:black;border-radius:12px;padding:12px;font-size:14px;'><tr><th>Region</th><th>Holders</th><th>Status</th></tr>`;
@@ -195,7 +199,6 @@ async function loadRegionStandings() {
 }
 
 document.getElementById("connectWalletBtn").onclick = connectWallet;
-
 document.getElementById("joinBtn").onclick = async () => {
   const region = document.getElementById("regionSelect").value;
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
@@ -213,12 +216,16 @@ document.getElementById("joinBtn").onclick = async () => {
 
 document.getElementById("distributeBtn").onclick = async () => {
   const region = document.getElementById("adminRegionSelect").value;
-  if (!region) return alert("Please select a region");
+  const week = parseInt(document.getElementById("weekInput").value);
+  if (!region || isNaN(week) || week < 1) {
+    alert("Please select a region and enter a valid week number.");
+    return;
+  }
   const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
   try {
-    const tx = await contract.distributeReward(region, 1);
+    const tx = await contract.distributeReward(region, week);
     await tx.wait();
-    alert("Rewards distributed successfully!");
+    alert(`Rewards distributed for ${region}, Week ${week}!`);
     loadRegionStandings();
   } catch (e) {
     alert("Distribution failed: " + e.message);
@@ -229,9 +236,7 @@ document.getElementById("burnBtn").onclick = () => {
   alert("Burn + Rollover will be implemented in final contract deployment.");
 };
 
-window.addEventListener("load", () => {
-  document.getElementById("standingsBox").innerHTML = "Please connect wallet to view standings.";
-});
+window.addEventListener("load", loadRegionStandings);
 </script>
 </body>
 </html>
