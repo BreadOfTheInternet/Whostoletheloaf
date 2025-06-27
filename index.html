@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BOWWW Vending Machine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🥖 BOWWW Vending Machine</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
@@ -11,140 +11,189 @@
       margin: 0;
       font-family: 'Montserrat', sans-serif;
       background-color: #6a0dad;
-      color: white;
       text-align: center;
+      color: white;
     }
     header {
-      padding: 20px;
+      margin-top: 20px;
     }
-    header h1 {
-      margin: 0.5em 0;
-      font-size: 2em;
+    header img {
+      width: 120px;
+      margin: 0 12px;
+      vertical-align: middle;
     }
-    main {
+    h1, h2 {
+      margin: 0.6em 0 0.3em;
+      font-size: 1.8em;
+      padding: 0 12px;
+    }
+    .vending-box {
       background-color: #ffd141;
       color: black;
-      max-width: 500px;
-      margin: 2em auto;
-      padding: 2em;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      max-width: 700px;
+      width: 90%;
+      margin: 1.5em auto;
+      padding: 1.5em;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      text-align: center;
     }
-    .status {
-      margin: 1em 0;
+    .vending-box h2 {
+      margin-top: 0;
+      font-size: 1.6em;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 1em;
+    }
+    .button {
+      padding: 10px 18px;
+      font-size: 14px;
       font-weight: bold;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
       border-radius: 8px;
       border: none;
-      margin: 8px 0;
-    }
-    button {
       cursor: pointer;
+    }
+    .connect { background-color: #8000c9; color: white; }
+    .buy { background-color: #eeeeee; color: black; }
+    .status {
+      margin: 10px auto;
       font-weight: bold;
     }
-    .connect-btn {
-      background-color: #8000c9;
-      color: white;
+    .connected-address {
+      color: black !important;
     }
-    .buy-btn {
-      background-color: #6a0dad;
-      color: white;
+    input[type="number"] {
+      padding: 8px;
+      border-radius: 6px;
+      width: 80px;
+      font-size: 14px;
+      margin-top: 10px;
     }
     footer {
       margin-top: 2em;
-      font-size: 0.9em;
     }
     footer a {
       color: #fff;
       text-decoration: none;
-      margin: 0 8px;
+      margin: 0 10px;
+      font-size: 0.9em;
+    }
+    p.fixed-rate {
+      margin: 0.5em 0;
+      font-weight: bold;
+    }
+    p.limit-message {
+      color: red;
+      font-weight: bold;
+      margin: 0.5em 0;
+    }
+    @media (max-width: 480px) {
+      .button-group { flex-direction: column; }
+      header img { width: 90px; }
+      h1, h2 { font-size: 1.4em; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>🥖 BOWWW Vending Machine</h1>
-    <p>Fixed Rate: 1107 BOWWW for 3.69 MATIC - Limitted of 1 Bundle Per Wallet. </p>
+    <img src="$BOWWW.PNG" alt="$BOWWW Logo" />
+    <img src="matic.PNG" alt="Matic Logo" />
   </header>
-
   <main>
-    <div class="status">Connected: <span id="walletStatus">Not connected</span></div>
-    <button id="connectWalletBtn" class="connect-btn">Connect Wallet</button>
+    <div class="vending-box">
+      <h2>🥖 BOWWW Vending Machine</h2>
+      <p class="fixed-rate">Fixed Rate: <strong>1107 BOWWW</strong> for <strong>3.69 MATIC</strong></p>
+      <p class="limit-message">Limit: 1 Bundle Per Wallet</p>
 
-    <div>
-      <label for="bundleInput"><strong>Number of Bundles:</strong></label><br/>
-      <input type="number" id="bundleInput" value="1" min="1" />
+      <div class="status">
+        Connected: <span id="walletStatus" class="connected-address">Not connected</span>
+      </div>
+
+      <div class="button-group">
+        <button id="connectWalletBtn" class="button connect">Connect Wallet</button>
+      </div>
+
+      <p>Number of Bundles:<br>
+        <input type="number" id="bundleCount" value="1" min="1" max="1" disabled>
+      </p>
+
+      <p>Total Cost: <span id="totalCost">3.69 MATIC</span></p>
+
+      <div class="button-group">
+        <button id="buyBtn" class="button buy" disabled>Buy Now</button>
+      </div>
+
+      <footer style="margin-top:1.5em;">
+        <a href="https://polygonscan.com/token/0x284414b6777872E6DD8982394Fed1779dc87a3Cf#code" target="_blank">View $BOWWW Token</a>
+      </footer>
     </div>
-    <div id="totalCostDisplay"><strong>Total Cost:</strong> 3.69 MATIC</div>
-
-    <button id="buyBtn" class="buy-btn" disabled>Buy Now</button>
   </main>
 
-  <footer>
-    <a href="https://polygonscan.com/token/0x284414b6777872E6DD8982394Fed1779dc87a3Cf">View $BOWWW Token</a>
-  </footer>
+  <script>
+    const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
+    const CONTRACT_ABI = [
+      "function joinGame(string region) payable"
+    ];
 
-<script>
-const CONTRACT_ADDRESS = "0x403C73A921FB11375816d4F035FC1711229F2b7F";
-const CONTRACT_ABI = [
-  "function joinGame(string region) payable"
-];
-const PRICE_PER_BUNDLE = 3.69;
-const REGION_NAME = "Standard Purchase";
+    let provider, signer, userAddress = "";
 
-let provider, signer, userAddress = "";
+    const connectWalletBtn = document.getElementById("connectWalletBtn");
+    const buyBtn = document.getElementById("buyBtn");
+    const walletStatus = document.getElementById("walletStatus");
 
-document.getElementById("bundleInput").addEventListener("input", updateTotalCost);
-document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
-document.getElementById("buyBtn").addEventListener("click", buyNow);
-
-function updateTotalCost() {
-  const qty = parseInt(document.getElementById("bundleInput").value) || 1;
-  const total = (PRICE_PER_BUNDLE * qty).toFixed(2);
-  document.getElementById("totalCostDisplay").innerHTML = `<strong>Total Cost:</strong> ${total} MATIC`;
-}
-
-async function connectWallet() {
-  if (window.ethereum) {
-    try {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      userAddress = await signer.getAddress();
-      document.getElementById("walletStatus").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
-      document.getElementById("buyBtn").disabled = false;
-    } catch (err) {
-      alert("Wallet connection failed.");
-      console.error(err);
-    }
-  } else {
-    alert("Please install MetaMask.");
-  }
-}
-
-async function buyNow() {
-  const qty = parseInt(document.getElementById("bundleInput").value) || 1;
-  const totalPrice = (PRICE_PER_BUNDLE * qty).toFixed(2);
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-  try {
-    const tx = await contract.joinGame(REGION_NAME, {
-      value: ethers.utils.parseEther(totalPrice.toString())
+    connectWalletBtn.addEventListener("click", async () => {
+      if (window.ethereum) {
+        try {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = provider.getSigner();
+          userAddress = await signer.getAddress();
+          walletStatus.textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+          walletStatus.style.color = "green";
+          buyBtn.disabled = false;
+        } catch (err) {
+          console.error(err);
+          walletStatus.textContent = "Connection failed";
+          walletStatus.style.color = "red";
+        }
+      } else {
+        alert("MetaMask not found. Please install MetaMask.");
+      }
     });
-    await tx.wait();
-    alert(`Success! Purchased ${qty * 1107} BOWWW for ${totalPrice} MATIC.\nTX: https://polygonscan.com/tx/${tx.hash}`);
-  } catch (e) {
-    alert("Transaction failed: " + e.message);
-    console.error(e);
-  }
-}
-</script>
+
+    buyBtn.addEventListener("click", async () => {
+      if (!signer) {
+        alert("Please connect your wallet first.");
+        return;
+      }
+
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+      try {
+        const tx = await contract.joinGame("BOWWW", {
+          value: ethers.utils.parseEther("3.69")
+        });
+        await tx.wait();
+        alert(`✅ Success! You received 1107 $BOWWW. This wallet cannot buy again.`);
+        buyBtn.disabled = true;
+      } catch (err) {
+        console.error(err);
+        if (err.message.includes("Already joined")) {
+          alert("⚠️ This wallet has already purchased its one-time bundle.");
+        } else if (err.message.includes("Must pay 3.69 MATIC")) {
+          alert("⚠️ Error: Make sure you're sending exactly 3.69 MATIC.");
+        } else {
+          alert("Transaction failed: " + err.message);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
-
 
 
 
